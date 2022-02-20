@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript" src="topological.js"></script>
+</head>
+<body style="margin: 0;">
+<div class="main" style="border:1px solid #ccc;margin: 50px;width: 1200px;height: 800px;">
+    <canvas id="canvas" width="1200" height="800"></canvas>
+</div>
+</body>
+<script type="text/javascript">
+    topological({
+        id:"canvas",
+        data:[
+            {
+                "name": "济南",
+                "children": [
+                    {
+                        "name": "历下区",
+                        "children": [
+                            {"name": "历下区01", "id": "2_0", "showChildren": false},
+                            {"name": "历下区02","id": "2_1","showChildren": false},
+                            {"name": "历下区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_0",
+                        "showChildren": false
+                    },
+                    {
+                        "name": "市中区",
+                        "children": [
+                            {"name": "市中区01", "id": "2_0", "showChildren": false},
+                            {"name": "市中区02","id": "2_1","showChildren": false},
+                            {"name": "市中区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_1",
+                        "showChildren": false
+                    },
+                    {
+                        "name": "槐荫区",
+                        "children": [
+                            {"name": "槐荫区01", "id": "2_0", "showChildren": false},
+                            {"name": "槐荫区02","id": "2_1","showChildren": false},
+                            {"name": "槐荫区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_2",
+                        "showChildren": false
+                    },
+                    {
+                        "name": "天桥区",
+                        "children": [
+                            {"name": "天桥区01", "id": "2_0", "showChildren": false},
+                            {"name": "天桥区02","id": "2_1","showChildren": false},
+                            {"name": "天桥区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_3",
+                        "showChildren": false
+                    },
+                    {
+                        "name": "历城区",
+                        "children": [
+                            {"name": "历城区01", "id": "2_0", "showChildren": false},
+                            {"name": "历城区02","id": "2_1","showChildren": false},
+                            {"name": "历城区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_4",
+                        "showChildren": false
+                    },
+                    {
+                        "name": "长清区",
+                        "children": [
+                            {"name": "长清区01", "id": "2_0", "showChildren": false},
+                            {"name": "长清区02","id": "2_1","showChildren": false},
+                            {"name": "长清区03", "id": "2_2", "showChildren": false}
+                        ],
+                        "id": "1_5",
+                        "showChildren": false
+                    }
+                ],
+                "id": "0_0",
+                "showChildren": false
+            }
+            ]
+    })
+</script>
+</html>

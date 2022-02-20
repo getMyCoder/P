@@ -1,0 +1,41 @@
+{
+  "project": [
+    {"name": "Vue-Element","val":"vue小项目","src": "vue.png","href": "https://getmycoder.github.io/index"},
+    {"name": "vue系统","val":"vue后台系统","src": "vue_system.png","href": "./project/vue_system/index.html"},
+    {"name": "大屏展示","val":"公司项目，数据展示","src": "BigScreen.png","href": "https://getmycoder.github.io/Project/project/BigScreen/index.html"},
+    {"name": "业务大屏","val":"公司项目，数据展示，第二版","src": "maxNewWeb.png","href": "https://getmycoder.github.io/Project/project/maxNewWeb/index.html"},
+    {"name": "数据中心","val":"公司项目，数据展示，canvas树状结构图形","src": "DataCenter02.png","href": "https://getmycoder.github.io/Project/project/DataCenter/index02.html"},
+    {"name": "移动端","val":"移动端项目，微信公众号项目，公司展示页面","src": "yd.png","href": "https://getmycoder.github.io/Project/project/Mobile/index.html"},
+    {"name": "程序开发","val":"程序页面，前端页面实时展示后台的程序运行状态，如果出现问题，会实时展示各种错误的状态","src": "tz.png","href": "https://getmycoder.github.io/Project/project/DragDrop/index.html"},
+    {"name": "百度地图攻击","val":"百度地图攻击效果","src": "baidu_map.png","href": "./project/TaianMap_Baidu/index.html"},
+    {"name": "地图攻击","val":"地图攻击效果","src": "baidu_map.png","href": "./project/map/holisticAttack.html"},
+    {"name": "攻击排名","val":"攻击排名动态展示","src": "teamRank.png","href": "./project/teamRank/index.html"},
+    {"name": "大屏展示","val":"动态页面","src": "cheat_ico.png","href": "./project/cheat_screen/index.html"}
+  ],
+  "plugDom": [
+    {"name": "Kui框架","val":"视图UI，包括栅格系统，按钮，各种小插件，方法等","src": "kui.png","href": "http://www.nodeserver.gq/kui/"},
+    {"name": "Tree节点拖拽","val":"渲染的树形视图，然后可以拖拽，可以用于各种流程图","src": "drapNode.png","href": "./project/drapNode/index.html"},
+    {"name": "调查问卷","val":"调查问卷的拖拽，拖动编辑等功能","src": "survey.png","href": "./project/survey/index.html"},
+    {"name": "后台管理框架","val":"简单的导航插件，简化前端的页面的逻辑","src": "nav.png","href": "https://getmycoder.github.io/Project/project/ViewFrame/index.html"},
+    {"name": "树插件","val":"数据渲染成树结构的树形视图","src": "treeDom.png","href": "./project/treeDom/index.html"},
+    {"name": "分页插件","val":"分页插件","src": "page.png","href": "./project/page/index.html"},
+    {"name": "canvas画布签名","val":"canvas画布签名、添加文字","src": "canvas_autograph.png","href": "./project/canvas_autograph/index.html"},
+    {"name": "音频播放器","val":"音乐","src": "music.png","href": "https://getmycoder.github.io/Project/project/musicNav/index.html"}
+  ],
+  "plugCanvas": [
+    {"name": "canvas-line","val":"canvas","src": "canvas_line.png","href": "./project/canvas_line/index.html"},
+    {"name": "canvas数据","val":"canvas小项目","src": "canvas.png","href": "https://getmycoder.github.io/echart/"},
+    {"name": "canvas树","val":"canvas树状图","src": "DataCenter01.png","href": "https://getmycoder.github.io/Project/project/DataCenter/index01.html"},
+    {"name": "canvas特效","val":"canvas插件","src": "DataCenter03.png","href": "https://getmycoder.github.io/Project/project/DataCenter/index03.html"}
+  ],
+  "function": [
+    {"name": "数组简单排序","val":"方法","src": "array.png","href": "./project/function/arraySort.html"},
+    {"name": "ajax轮询优化","val":"方法","src": "loopAjax.png","href": "./project/function/loopAjax.html"},
+    {"name": "列表数据转树类型","val":"方法","src": "treeData.png","href": "./project/function/treeData.html"}
+  ],
+  "game": [
+    {"name": "小游戏","val":"小游戏","src": "moveBall.png","href": "./project/moveBall_game/index.html"},
+    {"name": "小游戏","val":"小游戏","src": "pingtu_game.png","href": "./project/puzzle_game/index.html"},
+    {"name": "小游戏","val":"俄罗斯方块","src": "Tetris_game.png","href": "./project/Tetris_game/index.html"}
+  ]
+}

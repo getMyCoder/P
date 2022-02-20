@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <style type="text/css">
+        body {margin: 0;padding: 0;position: relative;}
+
+        .main {width: 98%;margin: 15px auto;border: 1px solid #ccc;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
+
+        .mainUl {list-style: none;overflow: hidden; padding: 0;width: 99%;margin: 0 auto;}
+
+        .mainUl li {float: left;width: 9%;margin: 15px 0.5% 0;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;overflow: hidden;}
+
+        .mainUl li a {display: block;height: inherit;font-size: 14px;text-decoration: none;color: #666;}
+
+        .mainUl li img {width: 100%;height: 80%;margin: 0;padding: 0;vertical-align: top}
+
+        .mainUl li span { display: block;width: 100%;text-align: center;}
+
+        @media (max-width: 1000px) {
+            .mainUl li {width: 16%;margin: 15px 0.3%;}
+        }
+
+        @media (min-width: 1000px) and (max-width: 1200px) {
+            .mainUl li {width: 12%;margin: 15px 0.25%;}
+        }
+
+        .title {width: 100%;margin: 0 auto;height: 40px;background: #f1f1f1;line-height: 40px;border-bottom: 1px solid #ccc;}
+
+        .title h2 {font-size: 14px;color: #666; margin: 0;padding: 0 0 0 15px;}
+
+        .top-title {width: 98%;margin: 10px auto;text-align: center;font-size: 16px;color: #666;background: #f1f1f1;height: 45px;line-height: 45px;border: 1px solid #ccc;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
+
+        .pop {position: fixed;background: rgba(0, 0, 0, 0.5);top: 0;left: 0;width: 0;display: none;height: 0;}
+
+        .popMain {background: #fff;width: 80%;margin: 5% auto;
+            -webkit-box-shadow: 0 0 5px 0 #ccc;
+            -moz-box-shadow: 0 0 5px 0 #ccc;
+            box-shadow: 0 0 5px 0 #ccc;
+            display: none;
+            position: relative;
+        }
+
+        .popTitle {text-align: center;height: 35px;line-height: 35px;background: #ddd;font-size: 16px;color: #666;position: relative;}
+
+        .popTitle h2 {text-align: center;height: 35px;line-height: 35px;background: #ddd;font-size: 16px;color: #666;font-weight: normal}
+
+        .popTitle span {position: absolute;top: 3px;right: 5px;font-size: 22px;color: #666;font-weight: bold;display: block;height: 26px;width: 26px;text-align: center;line-height: 26px;cursor: pointer;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;border: 1px solid #ccc}
+
+        .popTitle span:hover {background: #ccc;}
+
+        .btnBottom {width: 100%;position: absolute;bottom: 0;left: 0;height: 46px;background: #f6f6f6;}
+
+        .btnBottom button {float: right;width: 96px;height: 32px;background: #009688;border: none;color: #fff;font-size: 14px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin: 7px 15px;cursor: pointer;outline: none;}
+
+        .flowBtn {position: fixed;top: 10px;right: 15px;width: 80px;height: 47px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;background: #009688;overflow: hidden;}
+
+        .flowBtn button {width: 100%;height: 100%;background: none;border: none;color: #fff;cursor: pointer;}
+
+        .container { position: relative;width: 100%;}
+
+        .items {float: left;position: absolute;}
+
+        .itemsCon {background: #f9f9f9;margin: 10px;padding: 8px;border: 1px solid #f2f2f2;
+            -webkit-box-shadow: 0 0 15px 0 #ccc;
+            -moz-box-shadow: 0 0 15px 0 #ccc;
+            box-shadow: 0 0 15px 0 #ccc;
+        }
+
+        .itemsCon a {text-decoration: none}
+
+        .itemsCon img {width: 100%;}
+
+        .itemsCon i {display: block;font-style: normal;font-size: 16px;color: #333;line-height: 30px;}
+
+        .itemsCon span {display: block;font-size: 14px;color: #666;line-height: 24px;}
+
+        #canvas {position: fixed;top: 0;left: 0;}
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script type="text/javascript" src="./project/canvas_line/canvas.js"></script>
+<div class="top-title">web前端</div>
+<div class="container" data-mode="0"></div>
+<!--弹窗-->
+<div class="pop">
+    <div class="popMain">
+        <div class="popTitle"><h2></h2><span class="closePop">&times;</span></div>
+        <div class="popCon">
+            <iframe src="" frameborder="0"></iframe>
+        </div>
+        <div class="btnBottom">
+            <button class="closePop">关闭</button>
+        </div>
+    </div>
+</div>
+<!--button模式切换-->
+<div class="flowBtn">
+    <button class="toggleType">模式切换</button>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(window).resize(function () {
+            loading();
+        });
+
+        // loading
+        function loading() {
+            $(" .mainUl li a").width($(".mainUl li").width() - 2);
+            $(".mainUl li").height($(".mainUl li").width());
+            $(".mainUl li span").css({
+                'height': $(".mainUl li").height() * 0.2 - 1 + "px",
+                'lineHeight': $(".mainUl li").height() * 0.2 - 1 + "px"
+            });
+            // 弹窗
+            popFun();
+        }
+
+        // 弹窗
+        function popFun() {
+            var setThis = null;
+            $(".mainFun li").each(function () {
+                $(this).find('a').click(function () {
+                    var _this = this;
+                    // 展示
+                    popStyle.show($(_this));
+                    // iframe数据
+                    popStyle.dataIframe($(_this));
+                    setThis = this;
+                });
+                // 关闭
+                $(".closePop").unbind('click').click(function () {
+                    popStyle.hide($(setThis), $(".mainFun li").eq(0));
+                });
+            });
+
+        }
+
+        var popStyle = {
+            show: function (obj) {
+                $(".pop").css({
+                    'top': obj.offset().top - $(window).scrollTop() + "px",
+                    'left': obj.offset().left + "px",
+                    'width': obj.width() + "px",
+                    'height': obj.find('img').height() + "px"
+                });
+                $(".pop").show();
+                $(".pop").animate({
+                    'width': "100%",
+                    'height': document.documentElement.clientHeight + "px",
+                    'top': 0,
+                    'left': 0
+                }, 100, function () {
+                    $(".popMain").fadeIn(0, function () {
+                        $(".popMain").height(document.documentElement.clientHeight * 0.8);
+                        $(".popCon iframe").css({
+                            'width': $(".popMain").width() + "px",
+                            'height': $(".popMain").height() - $(".popTitle").height() - $(".btnBottom").height() + "px"
+                        });
+                    });
+                });
+            },
+            hide: function (obj, objClose) {
+                $(".pop").animate({
+                    'width': objClose.width(),
+                    'height': objClose.find('img').height(),
+                    'top': (obj.offset().top - $(window).scrollTop()) + "px",
+                    'left': obj.offset().left + "px"
+                }, 100, function () {
+                    $(".pop").hide();
+                    $(".popMain").hide();
+                });
+            },
+            dataIframe: function (obj) {
+                $(".popCon iframe").attr('src', obj.attr('data-url'));
+                $(".popTitle h2").text(obj.find('span').text());
+            }
+        };
+
+        // 请求数据
+        $.ajax({
+            type: "GET",
+            url: "server.json",
+            success: function (data) {
+                // 默认模式
+                dataBox(data);
+                // 切换模式
+                $(".toggleType").click(function () {
+                    if ($(".container").attr('data-mode') == '0') {
+                        dataFlow(data);
+                        $(".container").attr('data-mode', '1');
+                    } else {
+                        dataBox(data);
+                        $(".container").attr('data-mode', '0');
+                    }
+                });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+        // 正常模式
+        function dataBox(data) {
+            $(".container").html(' ');
+            $(".container").append('<div class="main">\n' +
+                '        <div class="title"><h2>项目</h2></div>\n' +
+                '        <ul class="mainUl mainPro"></ul>\n' +
+                '    </div>\n' +
+                '    <div class="main">\n' +
+                '        <div class="title"><h2>Dom插件</h2></div>\n' +
+                '        <ul class="mainUl mainPluDom"></ul>\n' +
+                '    </div>\n' +
+                '    <div class="main">\n' +
+                '        <div class="title"><h2>Canvas插件</h2></div>\n' +
+                '        <ul class="mainUl mainPluCanvas"></ul>\n' +
+                '    </div>\n' +
+                '    <div class="main">\n' +
+                '        <div class="title"><h2>实用性方法汇总</h2></div>\n' +
+                '        <ul class="mainUl mainFun"></ul>\n' +
+                '    </div>\n' +
+                '    <div class="main">\n' +
+                '        <div class="title"><h2>小游戏</h2></div>\n' +
+                '        <ul class="mainUl mainGame"></ul>\n' +
+                '    </div>'
+            );
+            // 项目
+            var proData = '';
+            for (var i = 0; i < data.project.length; i++) {
+                proData += '<li>' +
+                    '<a href="' + data.project[i].href + '" target="_blank">' +
+                    '<img src="images/' + data.project[i].src + '" alt="">' +
+                    '<span>' + data.project[i].name + '</span>' +
+                    '</a>' +
+                    '</li>';
+            }
+            $(".mainPro").append(proData);
+            // Dom插件
+            var plgDataDom = '';
+            for (var j = 0; j < data.plugDom.length; j++) {
+                plgDataDom += '<li>' +
+                    '<a href="' + data.plugDom[j].href + '" target="_blank">' +
+                    '<img src="images/' + data.plugDom[j].src + '" alt="">' +
+                    '<span>' + data.plugDom[j].name + '</span>' +
+                    '</a>' +
+                    '</li>';
+            }
+            $(".mainPluDom").append(plgDataDom);
+            // Canvas插件
+            var plgDataCanvas = '';
+            for (var j = 0; j < data.plugCanvas.length; j++) {
+                plgDataCanvas += '<li>' +
+                    '<a href="' + data.plugCanvas[j].href + '" target="_blank">' +
+                    '<img src="images/' + data.plugCanvas[j].src + '" alt="">' +
+                    '<span>' + data.plugCanvas[j].name + '</span>' +
+                    '</a>' +
+                    '</li>';
+            }
+            $(".mainPluCanvas").append(plgDataCanvas);
+            // 实用性方法汇总
+            //var funData = '';
+           // for (var k = 0; k < data.function.length; k++) {
+              //  funData += '<li>' +
+                 //   '<a href="javascript:;" data-url="' + data.function[k].href + '">' +
+                  //  '<img src="images/' + data.function[k].src + '" alt="">' +
+                 //   '<span>' + data.function[k].name + '</span>' +
+                 //   '</a>' +
+                //    '</li>';
+          //  }
+           // $(".mainFun").append(funData);
+            // 小游戏
+            var gameData = '';
+            for (var l = 0; l < data.game.length; l++) {
+                gameData += '<li>' +
+                    '<a href="' + data.game[l].href + '" target="_blank">' +
+                    '<img src="images/' + data.game[l].src + '" alt="">' +
+                    '<span>' + data.game[l].name + '</span>' +
+                    '</a>' +
+                    '</li>';
+            }
+            $(".mainGame").append(gameData);
+            loading();
+        }
+
+        // 瀑布流模式
+        function dataFlow(data) {
+            $(".container").html('');
+            var htmlStr = '', srcHref = '';
+            for (var val in data) {
+                srcHref = val === 'function' ? 'iframe' : 'a';
+                for (var i = 0; i < data[val].length; i++) {
+                    htmlStr += '<div class="items">' +
+                        '<div class="itemsCon">' +
+                        '<a href="javascript:;" data-srcHref="' + srcHref + '" data-url="' + data[val][i].href + '">' +
+                        '<img src="images/' + data[val][i].src + '" alt="">' +
+                        '<i>' + data[val][i].name + '</i>' +
+                        '<span>' + data[val][i].val + '</span>' +
+                        '</a>' +
+                        '</div>' +
+                        '</div>';
+                }
+            }
+            $(".container").html(htmlStr);
+            var setThis = null, _this_ = null;
+            $(".container .items").each(function () {
+                _this_ = this;
+                if ($(this).find('a').attr('data-srcHref') == 'a') {
+                    $(this).find('a').attr('href', $(this).find('a').attr('data-url'));
+                    $(this).find('a').attr('target', "_blank");
+                } else {
+
+                    $(this).find('a').click(function () {
+                        var _this = this;
+                        // 展示
+                        popStyle.show($(_this));
+                        // iframe数据
+                        popStyle.dataIframe($(_this));
+                        setThis = this;
+                        // 关闭
+                        $(".closePop").unbind('click').click(function () {
+                            popStyle.hide($(setThis), $(_this_));
+                        });
+                    });
+
+                }
+            });
+            cascadeFlow($(".container"), 6);
+        }
+
+        // 瀑布流
+        function cascadeFlow(obj, row) {
+            var items = {
+                row: row,
+                arr: [],
+                temporaryVal: {
+                    val: [],
+                    index: 0
+                }
+            };
+            for (var j = 0; j < items.row; j++) {
+                items.arr.push([(obj.width() / items.row) * j, 0]);
+            }
+            items.temporaryVal = {
+                val: [1, 1],
+                index: 0
+            };
+            obj.find(".items").each(function () {
+                for (var i = 0; i < items.arr.length; i++) {
+                    if (items.temporaryVal.val[1] > items.arr[i][1]) {
+                        items.temporaryVal = {
+                            val: items.arr[i],
+                            index: i
+                        };
+                    }
+                }
+                $(this).css({
+                    'width': 100 / items.row + "%",
+                    'top': items.temporaryVal.val[1] + "px",
+                    'left': items.temporaryVal.val[0] + "px"
+                });
+                items.temporaryVal.val[1] = items.temporaryVal.val[1] + parseInt($(this).height());
+            });
+        }
+    });
+</script>
+</body>
+</html>
