@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%
+        }
+
+        h1, h2, h3, h4, h5, h6, ol, ul, li, dl, dd, dt, p {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+            outline: none
+        }
+
+        a:link {
+        }
+
+        a:visited {
+        }
+
+        a:active {
+            outline: none;
+            background: none;
+            text-decoration: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        img {
+            margin: 0;
+            padding: 0;
+        }
+
+        input, textarea, select {
+            outline: none;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .main2048 {
+            width: 400px;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin: 50px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main2048 i {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .main2048 i span {
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .main2048 i span em {
+            top: 0;
+            width: 100%;
+            height: 1px;
+            position: absolute;
+            background: #ccc;
+        }
+
+        .main2048 i span strong {
+            width: 1px;
+            height: 100%;
+            position: absolute;
+            background: #ccc;
+        }
+
+        .main2048 h2 {
+            position: absolute;
+            color: #fff;
+            text-align: center;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        ._animate {
+            opacity: 0;
+            -webkit-animation: keyAniamte 1s linear forwards;
+            -o-animation: keyAniamte 1s linear forwards;
+            animation: keyAniamte 1s linear forwards;
+        }
+
+        @keyframes keyAniamte {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 100;
+            }
+        }
+
+        .tip {
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold
+        }
+
+    </style>
+</head>
+<body>
+<div class="tip"></div>
+<div class="main2048" id="main2048"></div>
+<script type="text/javascript">
+    $(function () {
+        // 调用
+        fn2048({
+            id: "#main2048"
+        })
+    })
+
+    function Fn2048() {
+        this.size = {
+            w: 100,
+            h: 100,
+            index: 4,
+            color: {
+                '2': "#dc7928",
+                '4': "#3c508f",
+                '8': "#a94853",
+                '16': "#52335c",
+                '32': "#7da62c",
+                '64': "#e7a034",
+                '128': "#1f3477",
+                '256': "#309a36",
+                '512': "#a62923",
+                '1024': "#e8c430",
+                '2048': "#1f7e94"
+            }
+        }
+        // 接受参数
+        this.params = null;
+        // 数据
+        this.gameData = null;
+        this.current = [];
+        this.maxValue = 2
+    }
+
+    Fn2048.prototype = {
+        // 初始化
+        init: function (params) {
+            this.params = params
+            // 初始化处理数据
+            this.handleData()
+
+            // 事件
+            this.operationEvt()
+        },
+        // 初始化处理数据
+        handleData: function () {
+            var _index = this.size.index;
+            // 初始化数据集合
+            this.gameData = {};
+            // 初始化临时数据
+            this.current = []
+            // 生成数据
+            this.randomFn(this.gameData, this.maxValue)
+            this.randomFn(this.gameData, this.maxValue)
+            this.randomFn(this.gameData, this.maxValue)
+            this.randomFn(this.gameData, this.maxValue)
+            // 创建标签
+            this.drawView()
+        },
+        // 随机生成数字
+        randomFn: function (_d, value, ani) {
+            var _r = [parseInt(Math.random() * this.size.index), parseInt(Math.random() * this.size.index)]
+            if (Object.keys(_d).length == 16) {
+                // 判断
+                this.stateJudge('game over')
+            } else {
+                // 判断位置
+                if (!_d[_r[0] + "_" + _r[1]]) {
+                    // 添加数据
+                    _d[_r[0] + "_" + _r[1]] = {
+                        x: _r[0],
+                        y: _r[1],
+                        v: value,
+                        color: this.size.color[value],
+                        className: ani ? "_animate" : null
+                    }
+                } else {
+                    this.randomFn(_d, value, ani)
+                }
+            }
+        },
+        // 创建标签
+        drawView: function () {
+            var _str = ''
+            for (var i = 1; i < this.size.index; i++) {
+                _str += `<i><span><em style="top:${i * 1 / this.size.index * 100 + '%'}"></em><strong style="left:${i * 1 / this.size.index * 100 + '%'}"></strong></span></i>`
+            }
+
+            for (var item in this.gameData) {
+                var _v = this.gameData[item]
+                var _i = this.size.index
+                _str += `<h2 class="${_v.className ? _v.className : ''}" style="background: ${_v.color};top:${_v.y * (1 / _i * 100) + '%'};left:${_v.x * (1 / _i * 100) + '%'};width: ${1 / _i * 100 + '%'};height: ${1 / _i * 100 + '%'};"><b>${_v.v}</b></h2>`
+            }
+
+            $(this.params.id).empty().append(_str)
+        },
+        // 事件
+        operationEvt: function () {
+            var _this = this
+            $(document).bind('keydown',function (e) {
+                var value = [0, 0]
+                if (e.keyCode == 38) {
+                    // 上
+                    value = [-1, 0]
+                } else if (e.keyCode == 40) {
+                    // 下
+                    value = [1, 0]
+                } else if (e.keyCode == 37) {
+                    // 左
+                    value = [0, -1]
+                } else if (e.keyCode == 39) {
+                    // 右
+                    value = [0, 1]
+                }
+                _this.upData(value)
+                // 判断
+                _this.stateJudge()
+            })
+        },
+        // 更新数据
+        upData: function (value) {
+            var _currentCache = {};
+            // 提取数据
+            for (var _item in this.gameData) {
+                // 左右
+                if (value[1]) {
+                    if (!_currentCache[this.gameData[_item].y]) {
+                        _currentCache[this.gameData[_item].y] = []
+                    }
+                    _currentCache[this.gameData[_item].y].push(this.gameData[_item])
+                }
+                // 上下
+                if (value[0]) {
+                    if (!_currentCache[this.gameData[_item].x]) {
+                        _currentCache[this.gameData[_item].x] = []
+                    }
+                    _currentCache[this.gameData[_item].x].push(this.gameData[_item])
+                }
+                // 获取最大值
+                if (!this.maxValue || this.maxValue < this.gameData[_item].v) {
+                    this.maxValue = this.gameData[_item].v
+                }
+            }
+
+            // 排序
+            for (var sv in _currentCache) {
+                _currentCache[sv].sort(function (n, m) {
+                    if (value[1]) {
+                        return n.x > m.x ? 1 : -1
+                    } else if (value[0]) {
+                        return n.y > m.y ? 1 : -1
+                    }
+                })
+                // 填补空位
+                if (_currentCache[sv].length < this.size.index) {
+                    var _b = this.size.index - _currentCache[sv].length
+                    for (var i = 0; i < _b; i++) {
+                        if (value[1] == -1 || value[0] == -1) {
+                            _currentCache[sv].push(null)
+                        } else if (value[1] == 1 || value[0] == 1) {
+                            _currentCache[sv].unshift(null)
+                        }
+                    }
+                }
+            }
+
+            // 处理数据
+            for (var item in _currentCache) {
+                if (value[1] == -1 || value[0] == -1) {
+                    for (var k = 0; k < _currentCache[item].length; k++) {
+                        if (value[1] == -1) {
+                            judgeDir(_currentCache, item, k, this.size.color, 'x', -value[1])
+                        } else if (value[0] == -1) {
+                            judgeDir(_currentCache, item, k, this.size.color, 'y', -value[0])
+                        }
+                    }
+                } else if (value[1] == 1 || value[0] == 1) {
+                    for (var g = _currentCache[item].length - 1; g >= 0; g--) {
+                        if (value[1] == 1) {
+                            judgeDir(_currentCache, item, g, this.size.color, 'x', -value[1])
+                        } else if (value[0] == 1) {
+                            judgeDir(_currentCache, item, g, this.size.color, 'y', -value[0])
+                        }
+                    }
+                }
+            }
+
+            // 数据处理
+            function judgeDir(_currentCache, item, k, color, type, dir) {
+                if (_currentCache[item][k]) {
+                    var _c = _currentCache[item][k]
+                    _currentCache[item][k][type] = k
+                    _currentCache[item][k].className = null
+                    // 判断要合并的下一个数据是否存在
+                    if (_currentCache[item][k + dir]) {
+                        // 判断要合并的下一条数据的值和当前的值是否相同
+                        if (_currentCache[item][k].v == _currentCache[item][k + dir].v) {
+                            _currentCache[item][k].v = _c.v + _currentCache[item][k + dir].v
+                            _currentCache[item][k].color = color[_currentCache[item][k].v]
+                            // _currentCache[item][k+dir]=null
+                            if (value[1] == -1 || value[1] == -1) {
+                                _currentCache[item].splice(k + 1, 1)
+                            }
+                            if (value[1] == 1 || value[0] == 1) {
+                                _currentCache[item].splice(k - 1, 1)
+                                k--
+                                _currentCache[item].unshift(null)
+                            }
+                        }
+                    }
+                }
+                ;
+            }
+
+            // 更新数据
+            this.gameData = {}, _this = this
+            for (var _v in _currentCache) {
+                _currentCache[_v].forEach(function (v) {
+                    if (v) {
+                        _this.gameData[v.x + "_" + v.y] = v
+                    }
+                })
+            }
+
+            // 随机创建
+            this.randomFn(this.gameData, this.randomV(this.maxValue, 0), true)
+
+            // 更新视图
+            this.drawView()
+        },
+        // 成功或是失败
+        stateJudge: function (v) {
+            if (v) {
+                $('body').find(".tip").empty().append(`<span style="color: red;">${v}</span>`)
+                $(document).unbind('keydown')
+            }
+            for (var item in this.gameData) {
+                if (this.gameData[item].v == 2048) {
+                    $('body').find(".tip").empty().append(`<span style="color: green;">you are win</span>`)
+                    $(document).unbind('keydown')
+                }
+            }
+        },
+        // 随机生成数据
+        randomV: function (v, i) {
+            return 2
+            if (v % 2 !== 0) {
+                return Math.pow(2, parseInt(Math.random() * (parseInt(i / 2)) + 1))
+            } else {
+                return this.randomV(v / 2, i + 1)
+            }
+        }
+    }
+
+    // 入口
+    var fn2048 = function (params) {
+        var _f = new Fn2048()
+        _f.init(params)
+    }
+</script>
+</body>
+</html>
