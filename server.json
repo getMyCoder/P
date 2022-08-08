@@ -21,17 +21,8 @@
     {"name": "canvas画布签名","val":"canvas画布签名、添加文字","src": "canvas_autograph.png","href": "./project/canvas_autograph/index.html"},
     {"name": "表","val":"钟表","src": "watches.png","href": "./project/clocksWatches/index.html"}
   ],
-  "plugCanvas": [
-    {"name": "canvas-line","val":"canvas","src": "canvas_line.png","href": "./project/canvas_line/index.html"},
-    {"name": "canvas数据","val":"canvas小项目","src": "canvas.png","href": "https://getmycoder.github.io/echart/"},
-    {"name": "canvas树","val":"canvas树状图","src": "DataCenter01.png","href": "./project/DataCenter/index01.html"},
-    {"name": "canvas特效","val":"canvas插件","src": "DataCenter03.png","href": "./project/DataCenter/index03.html"}
-  ],
-  "function": [
-    {"name": "数组简单排序","val":"方法","src": "array.png","href": "./project/function/arraySort.html"},
-    {"name": "ajax轮询优化","val":"方法","src": "loopAjax.png","href": "./project/function/loopAjax.html"},
-    {"name": "列表数据转树类型","val":"方法","src": "treeData.png","href": "./project/function/treeData.html"}
-  ],
+  "plugCanvas": [],
+  "function": [],
   "game": [
     {"name": "五子棋","val":"小游戏","src": "chess.png","href": "./project/chess/index.html"},
     {"name": "2048","val":"2048","src": "game2048.png","href": "./project/game2048/index.html"},
