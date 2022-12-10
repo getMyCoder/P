@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            height: 30px;
+            width: 75px;
+            background: #ccc;
+            border: none;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .btnValue {
+            margin-top: 2px;
+            overflow: hidden;
+        }
+
+        .btnValue span {
+            height: 25px;
+            width: 155px;
+            display: block;
+            float: left;
+            margin-right: 3px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<canvas id="operationProcess" width="600" height="600" style="border:1px solid #ccc;"></canvas>
+<div class="btn">
+    <div class="btnbtn">
+        <button id="xSpeed">x+1</button>
+        <button id="xSpeed01">x-1</button>
+        <button id="ySpeed">y+1</button>
+        <button id="ySpeed01">y-1</button>
+    </div>
+    <div class="btnValue">
+        <span id="xSpeedValue">1</span>
+        <span id="ySpeedValue">1</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function Animate(params) {
+        console.log(params);
+        // 传递过来的参数
+        this.receive = params;
+
+        // 画布
+        this.canvas = null;
+        this.ctx = null;
+
+        // 缓存参数
+        this._canvas = null;
+        this._ctx = null;
+
+        // 路径
+        this.pathAgg = [];
+
+        // 动画
+        this.timer = null;
+    }
+
+    Animate.prototype = {
+        // 初始化
+        init: function () {
+            // 创建画布
+            this.createDraw();
+
+
+            return this;
+
+        },
+        // 创建画布
+        createDraw: function () {
+            // 获取画布
+            this.canvas = document.getElementById(this.receive.id);
+            this.ctx = this.canvas.getContext("2d");
+
+            // 创建缓存画布
+            this._canvas = document.createElement("canvas");
+            this._canvas.width = this.canvas.width;
+            this._canvas.height = this.canvas.height;
+            this._ctx = this._canvas.getContext("2d");
+
+            // 缓存绘制
+            this.animateDraw();
+
+        },
+        // 动画
+        animateDraw: function (params) {
+            this.clearModel();
+            // var initSpeedX = (params && params.x) ? params.x : 1;
+            // var initSpeedY = (params && params.y) ? params.y : 1;
+            var initSpeedX = 1;
+            var initSpeedY = 1;
+            var _p = {
+                speedX: 0,
+                speedXD: initSpeedX,
+                speedY: 0,
+                speedYD: initSpeedY,
+                speedXL: 0,
+                speedYL: 0
+            };
+
+            var timeL = 1000 / 60;
+            var frequencyX = parseInt((params && params.x) ? 200 / params.x : 200);
+            var minX = 0.1, maxX = 2 * initSpeedX - minX;
+            var speedXLength = maxX / (frequencyX * 0.5), speedXAdd = minX;
+            var indexX = 0, indexXV = 1;
+
+            var frequencyY = parseInt((params && params.y) ? 200 / params.y : 200);
+            var minY = 0.1, maxY = 2 * initSpeedY - minY;
+            var speedYLength = maxY / (frequencyY * 0.5), speedYAdd = minY;
+            var indexY = 0, indexYV = 1;
+
+            clearInterval(this.timer);
+            this.timer = setInterval(() => {
+                // X
+                // 次数判定
+                if (indexX <= 0) {
+                    speedXAdd = 0.1;
+                    indexXV = 1;
+                } else if (indexX >= frequencyX) {
+                    speedXAdd = 0.1;
+                    indexXV = -1;
+                }
+                indexX += indexXV;
+                if (indexXV > 0) {
+                    // 正向
+                    if (indexX < frequencyX * 0.5) {
+                        speedXAdd += speedXLength;
+                    } else if (indexX >= frequencyX * 0.5) {
+                        speedXAdd += -speedXLength;
+                    }
+                    _p.speedX += speedXAdd * ((this.canvas.width - 120) / frequencyX);
+                } else {
+                    // 反向
+                    if (indexX > frequencyX * 0.5) {
+                        speedXAdd += speedXLength;
+                    } else if (indexX <= frequencyX * 0.5) {
+                        speedXAdd += -speedXLength;
+                    }
+                    _p.speedX -= speedXAdd * ((this.canvas.width - 120) / frequencyX);
+                }
+
+
+                // y
+                // 次数判定
+                if (indexY <= 0) {
+                    speedYAdd = 0.1;
+                    indexYV = 1;
+                } else if (indexY >= frequencyY) {
+                    speedYAdd = 0.1;
+                    indexYV = -1;
+                }
+                indexY += indexYV;
+                if (indexYV > 0) {
+                    // 正向
+                    if (indexY < frequencyY * 0.5) {
+                        speedYAdd += speedYLength;
+                    } else if (indexY >= frequencyY * 0.5) {
+                        speedYAdd += -speedYLength;
+                    }
+                    _p.speedY += speedYAdd * ((this.canvas.height - 120) / frequencyY);
+                } else {
+                    // 反向
+                    if (indexY > frequencyY * 0.5) {
+                        speedYAdd += speedYLength;
+                    } else if (indexY <= frequencyY * 0.5) {
+                        speedYAdd += -speedYLength;
+                    }
+                    _p.speedY -= speedYAdd * ((this.canvas.height - 120) / frequencyY);
+                }
+
+
+                // 绘制
+                this.cache({
+                    speed: _p
+                });
+            }, timeL);
+        },
+        // 缓存绘制
+        cache: function (params) {
+            this._ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // 绘制内部
+            this.draw(params);
+
+            // 实际绘制
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.drawImage(this._canvas, 0, 0, this.canvas.width, this.canvas.height);
+
+        },
+        // 绘制
+        draw: function (params) {
+
+            // line 固定
+            this._ctx.beginPath();
+            this._ctx.strokeStyle = "#ccc";
+            this._ctx.lineWidth = 1.5;
+            this._ctx.moveTo(50, 50);
+            this._ctx.lineTo(50, 550);
+            this._ctx.moveTo(50, 50);
+            this._ctx.lineTo(550, 50);
+            this._ctx.stroke();
+            this._ctx.closePath();
+
+            // x
+            this._ctx.beginPath();
+            this._ctx.fillStyle = "red";
+            this._ctx.arc(50 + params.speed.speedX, 50, 5, 0, Math.PI * 2, false);
+            this._ctx.fill();
+            this._ctx.closePath();
+
+            // y
+            this._ctx.beginPath();
+            this._ctx.fillStyle = "red";
+            this._ctx.arc(50, 50 + params.speed.speedY, 5, 0, Math.PI * 2, false);
+            this._ctx.fill();
+            this._ctx.closePath();
+
+            // line 运动
+            this._ctx.beginPath();
+            this._ctx.strokeStyle = "blue";
+            this._ctx.lineWidth = 1;
+            // lin-x
+            this._ctx.moveTo(50 + params.speed.speedX, 50);
+            this._ctx.lineTo(50 + params.speed.speedX, 550);
+            // lin-y
+            this._ctx.moveTo(50, 50 + params.speed.speedY);
+            this._ctx.lineTo(550, 50 + params.speed.speedY);
+            this._ctx.stroke();
+            this._ctx.closePath();
+
+            // 交点
+            this.pathAgg.push({x: 50 + params.speed.speedX, y: 50 + params.speed.speedY});
+            // 交点形成的线条
+            this.intersectionDraw();
+
+        },
+        // 交点绘制
+        intersectionDraw: function () {
+
+            this._ctx.beginPath();
+            this._ctx.strokeStyle = "green";
+            this._ctx.lineWidth = 1;
+            this.pathAgg.forEach((v, index) => {
+                if (index == 0) {
+                    this._ctx.moveTo(v.x, v.y);
+                }
+                this._ctx.lineTo(v.x, v.y);
+            });
+            this._ctx.stroke();
+            this._ctx.closePath();
+
+        },
+        // 初始化数据
+        clearModel: function () {
+
+            this.pathAgg = [];
+
+        }
+    };
+
+    function animate(params) {
+        // 实例化
+        var _animate = new Animate(params);
+        // 初始化
+        var _animateInit = _animate.init();
+
+        return _animateInit;
+    }
+
+
+    window.onload = function () {
+        var _animate = animate({
+            id: "operationProcess"
+        });
+        var params = {
+            x: 1,
+            y: 1
+        };
+        document.getElementById("xSpeed").onclick = function () {
+            params.x = params.x + 1;
+            document.getElementById("xSpeedValue").innerText = params.x;
+            _animate.animateDraw(params);
+        };
+        document.getElementById("ySpeed").onclick = function () {
+            params.y = params.y + 1;
+            document.getElementById("ySpeedValue").innerText = params.y;
+            _animate.animateDraw(params);
+        };
+
+        document.getElementById("xSpeed01").onclick = function () {
+            params.x = params.x <= 1 ? 1 : (params.x - 1);
+            document.getElementById("xSpeedValue").innerText = params.x;
+            _animate.animateDraw(params);
+        };
+        document.getElementById("ySpeed01").onclick = function () {
+            params.y = params.y <= 1 ? 1 : params.y - 1;
+            document.getElementById("ySpeedValue").innerText = params.y;
+            _animate.animateDraw(params);
+        };
+
+
+    };
+
+</script>
+</body>
+</html>
