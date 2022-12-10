@@ -18,6 +18,8 @@
     {"name": "后台管理框架","val":"简单的导航插件，简化前端的页面的逻辑","src": "nav.png","href": "./project/ViewFrame/index.html"},
     {"name": "树插件","val":"数据渲染成树结构的树形视图","src": "treeDom.png","href": "./project/treeDom/index.html"},
     {"name": "分页插件","val":"分页插件","src": "page.png","href": "./project/page/index.html"},
+    {"name": "颜色拾取器","val":"颜色拾取器","src": "colourDraw.png","href": "./project/colourDraw.html"},
+    {"name": "频率","val":"频率","src": "frequency.png","href": "./project/frequency.html"},
     {"name": "canvas画布签名","val":"canvas画布签名、添加文字","src": "canvas_autograph.png","href": "./project/canvas_autograph/index.html"},
     {"name": "表","val":"钟表","src": "watches.png","href": "./project/clocksWatches/index.html"}
   ],
