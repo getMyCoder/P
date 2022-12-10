@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas id="operationProcess" width="420" height="255" style="border:1px solid #ccc;"></canvas>
+<script type="text/javascript">
+    function ColorPicker(params) {
+        this.receive = params;
+        this.colorList = [
+            {
+                color: [255, 0, 0],
+                index: [1, 2]
+            },
+            {
+                color: [255, 0, 255],
+                index: [1]
+            },
+            {
+                color: [0, 0, 255],
+                index: [0, 1]
+            },
+            {
+
+                color: [0, 255, 255],
+                index: [0]
+            },
+            {
+                color: [0, 255, 0],
+                index: [0, 2]
+            },
+            {
+                color: [255, 255, 0],
+                index: [2]
+            },
+            {
+                color: [255, 0, 0],
+                index: [1, 2]
+            }
+
+        ];
+        // 当前颜色值
+        this.currentColor = this.colorList[0].color;
+        // 滑块位置
+        this.sliderPosition = 0;
+        // 获取颜色区域
+        this.getColorArc = null;
+        // 当前获取到的颜色值
+        this.colorValue = null;
+        this.colorValue16 = null;
+    }
+
+    ColorPicker.prototype = {
+        // 初始化
+        init: function () {
+            // 创建画布
+            this.createDraw();
+
+            // 获取颜色值
+            this.getColor();
+
+            return this;
+        },
+        // 创建画布
+        createDraw: function () {
+            // 获取画布
+            this.canvas = document.getElementById(this.receive.id);
+            this.ctx = this.canvas.getContext("2d");
+
+            // 创建缓存画布
+            this._canvas = document.createElement("canvas");
+            this._canvas.width = this.canvas.width;
+            this._canvas.height = this.canvas.height;
+            this._ctx = this._canvas.getContext("2d");
+
+            // 缓存绘制
+            this.animateDraw();
+
+        },
+        // 动画
+        animateDraw: function () {
+
+            this.cache();
+
+        },
+        // 缓存绘制
+        cache: function () {
+            this._ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // 绘制内部
+            this.draw();
+
+            // 实际绘制
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.drawImage(this._canvas, 0, 0, this.canvas.width, this.canvas.height);
+
+        },
+        // 绘制
+        draw: function () {
+            // 颜色区域
+            this.colorRegion();
+
+            // 滑动区域
+            this.slideRegion();
+
+            // 绘制获取颜色
+            this.getColorValue();
+
+            // 颜色展示
+            this.showColor();
+
+        },
+        // 颜色区域
+        colorRegion: function () {
+            this._ctx.beginPath();
+            this._ctx.strokeStyle = "#ccc";
+            this._ctx.strokeRect(0, 0, 255, 255);
+            this._ctx.stroke();
+            this._ctx.closePath();
+
+            this._ctx.beginPath();
+
+            var gradient03 = this._ctx.createLinearGradient(0, 0, 0, 255);
+            gradient03.addColorStop(0, "rgb(255,255,255)");
+            gradient03.addColorStop(1, "rgba(255,255,255,0)");
+            this._ctx.fillStyle = gradient03;
+            this._ctx.fillRect(0, 0, 255, 255);
+
+            var gradient02 = this._ctx.createLinearGradient(0, 0, 255, 0);
+            gradient02.addColorStop(0, "rgba(0,0,0,0)");
+            gradient02.addColorStop(1, "rgb(" + this.currentColor[0] + "," + this.currentColor[1] + "," + this.currentColor[2] + ")");
+            this._ctx.fillStyle = gradient02;
+            this._ctx.fillRect(0, 0, 255, 255);
+
+            var gradient01 = this._ctx.createLinearGradient(0, 0, 0, 255);
+            gradient01.addColorStop(0, "rgba(0,0,0,0)");
+            gradient01.addColorStop(1, "rgb(0,0,0)");
+            this._ctx.fillStyle = gradient01;
+            this._ctx.fillRect(0, 0, 255, 255);
+
+            this._ctx.fill();
+
+            this._ctx.closePath();
+
+        },
+        // 滑动区域
+        slideRegion: function () {
+            this._ctx.beginPath();
+            this._ctx.strokeStyle = "#ccc";
+            this._ctx.strokeRect(280, 0, 20, 255);
+            this._ctx.stroke();
+            this._ctx.closePath();
+
+            this._ctx.beginPath();
+            var gradient = this._ctx.createLinearGradient(0, 0, 0, 255);
+            this.colorList.forEach((v, i) => {
+                gradient.addColorStop(i * (1 / this.colorList.length), "rgb(" + v.color[0] + "," + v.color[1] + "," + v.color[2] + ")");
+            });
+            this._ctx.fillStyle = gradient;
+            this._ctx.fillRect(280, 0, 20, 255);
+            this._ctx.fill();
+            this._ctx.closePath();
+
+            // 滑块
+            this._ctx.beginPath();
+            this._ctx.fillStyle = "#000";
+            this._ctx.moveTo(300, this.sliderPosition);
+            this._ctx.lineTo(310, this.sliderPosition - 5);
+            this._ctx.lineTo(310, this.sliderPosition + 5);
+            this._ctx.lineTo(300, this.sliderPosition);
+            this._ctx.fill();
+            this._ctx.closePath();
+
+        },
+        // 绘制获取颜色
+        getColorValue: function () {
+            if (this.getColorArc) {
+                var colorV = this._ctx.getImageData(this.getColorArc[0], this.getColorArc[1], 1, 1).data;
+
+                // 颜色值rgb
+                this.colorValue = [colorV[0], colorV[1], colorV[2]];
+                // 颜色值16进制
+                this.colorValue16 = this.colorValue.reduce((p, n) => {
+                    return p + n.toString(16);
+                }, "#");
+                this._ctx.beginPath();
+                this._ctx.strokeStyle = "#fff";
+                this._ctx.arc(this.getColorArc[0], this.getColorArc[1], 5, 0, Math.PI * 2, false);
+                this._ctx.stroke();
+                this._ctx.closePath();
+            }
+        },
+        // 滑块获取颜色值
+        getColor: function () {
+            var dom = document.getElementById(this.receive.id);
+            // 鼠标按下
+            document.onmousedown = (md) => {
+                var _md = {
+                    x: md.clientX - dom.offsetLeft,
+                    y: md.clientY - dom.offsetTop
+                };
+                var currentSliderPosition = this.sliderPosition;
+
+                // 吸取颜色
+                if (_md.x >= 0 && _md.x <= 255 && _md.y >= 0 && _md.y <= 255) {
+                    this.getColorArc = [_md.x, _md.y];
+                    // 绘制
+                    this.cache();
+                }
+                // 滑块
+                if (_md.x >= 300 && _md.x <= 310 && _md.y > (this.sliderPosition - 5) && _md.y <= (this.sliderPosition + 5)) {
+                    // 拖动
+                    document.onmousemove = (mm) => {
+                        if (this.sliderPosition >= 0 && this.sliderPosition <= 254) {
+                            this.sliderPosition = currentSliderPosition + ((mm.clientY - dom.offsetTop) - _md.y);
+                        } else if (this.sliderPosition >= 254) {
+                            this.sliderPosition = 254;
+                            document.onmousemove = null;
+                        } else if (this.sliderPosition <= 0) {
+                            this.sliderPosition = 0;
+                            document.onmousemove = null;
+                        }
+
+                        // 获取颜色值
+                        var colorValue = this._ctx.getImageData(280, this.sliderPosition, 1, 1).data;
+                        this.currentColor = [colorValue[0], colorValue[1], colorValue[2]];
+
+                        // 绘制
+                        this.cache();
+                    };
+                }
+                // 吸取颜色
+                if (_md.x >= 0 && _md.x <= 255 && _md.y >= 0 && _md.y <= 255) {
+                    document.onmousemove = (mm) => {
+                        this.getColorArc = [mm.clientX - dom.offsetLeft, mm.clientY - dom.offsetTop];
+                        // 绘制
+                        this.cache();
+                    };
+                }
+
+                document.onmouseup = () => {
+                    this.getColorArc = null;
+                    document.onmousemove = null;
+                };
+            };
+
+        },
+        // 展示颜色值
+        showColor: function () {
+            if (this.colorValue) {
+                this._ctx.beginPath();
+                this._ctx.fillStyle = "rgb(" + this.colorValue[0] + "," + this.colorValue[1] + "," + this.colorValue[2] + ")";
+                this._ctx.fillRect(330, 0, 50, 50);
+                this._ctx.fill();
+                this._ctx.closePath();
+
+                this._ctx.beginPath();
+
+                this._ctx.fillStyle = "#000";
+                this._ctx.font = "14";
+                this._ctx.fillText(this.colorValue16, 330, 70);
+                this._ctx.fillText("rgb " + this.colorValue, 330, 85);
+                this._ctx.fill();
+
+                this._ctx.closePath();
+
+            }
+        }
+    };
+
+    function colorPicker(params) {
+        // 实例化
+        var _colorPicker = new ColorPicker(params);
+        // 初始化
+        var _cP = _colorPicker.init();
+
+        return _cP;
+    }
+
+    colorPicker({
+        id: "operationProcess"
+    });
+
+</script>
+</body>
+</html>
