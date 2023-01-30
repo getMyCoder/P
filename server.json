@@ -27,6 +27,7 @@
   ],
   "function": [],
   "game": [
+    {"name": "孔明棋","val":"小游戏","src": "KmChess.png","href": "./project/kmChess.html"},
     {"name": "五子棋","val":"小游戏","src": "chess.png","href": "./project/chess/index.html"},
     {"name": "2048","val":"2048","src": "game2048.png","href": "./project/game2048/index.html"},
     {"name": "小游戏","val":"小游戏","src": "moveBall.png","href": "./project/moveBall_game/index.html"},
