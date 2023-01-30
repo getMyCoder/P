@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>孔明棋</title>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .kmChess {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="kmChess">
+    <canvas id="canvas"></canvas>
+</div>
+<script type="text/javascript">
+    function KmChess() {
+        // 尺寸
+        this.size = {
+            width: 491,
+            height: 491,
+            item: 70,
+            radius: 20
+        }
+
+        // canvas、ctx
+        this.canvas = null
+        this.ctx = null
+
+        // cache-canvas、cache-ctx
+        this.canvasCache = null
+        this.ctxCache = null
+
+        // 坐标数据存储
+        this.coordinateData = {}
+
+        // 当前要走的棋子
+        this.currentChess = {
+            start: null,
+            end: null
+        }
+    }
+
+    KmChess.prototype = {
+        // 初始化
+        init: function () {
+            // 初始化画布
+            this.initCanvas()
+
+        },
+        // 初始化画布
+        initCanvas: function () {
+            this.canvas = document.getElementById('canvas')
+            this.canvas.width = this.size.width
+            this.canvas.height = this.size.height
+            this.ctx = canvas.getContext('2d')
+
+            // 创建缓存画布
+            this.canvasCache = document.createElement('canvas')
+            this.canvasCache.width = this.size.width
+            this.canvasCache.height = this.size.height
+            this.ctxCache = canvas.getContext('2d')
+
+            // 缓存机制绘制
+            this.initDraw()
+
+            // 事件
+            this.evtPiece()
+        },
+        // 缓存机制绘制
+        initDraw: function () {
+            this.ctx.clearRect(0, 0, this.size.width, this.size.height)
+            this.ctxCache.clearRect(0, 0, this.size.width, this.size.height)
+            // 缓存机制绘制
+            this.drawCanvas()
+            // 画布绘制
+            this.ctx.drawImage(this.canvasCache, 0, 0, this.size.width, this.size.height)
+        },
+        // 绘制页面
+        drawCanvas: function () {
+            // 绘制线条
+            this.drawLine()
+
+            // 绘制棋子
+            this.drawPiece()
+        },
+        // 绘制线条
+        drawLine: function () {
+            this.ctxCache.beginPath()
+            this.ctxCache.strokeStyle = '#ccc'
+            for (var i = 0; i <= 7; i++) {
+                for (var j = 0; j <= 7; j++) {
+                    // 中间棋盘
+                    if (!((i < 2 || i > 4) && (j < 2 || j > 4))) {
+                        // 绘棋盘线条
+                        this.ctxCache.moveTo(i * this.size.item + 0.5, j * this.size.item + 0.5)
+                        this.ctxCache.strokeRect(i * this.size.item + 0.5, j * this.size.item + 0.5, this.size.item, this.size.item)
+                        // this.ctxCache.fillText(i + '-' + j, i * this.size.item + 0.5 + this.size.item * 0.5, j * this.size.item + 0.5 + this.size.item * 0.5)
+                        // 创建棋子位置
+                        if (!this.coordinateData[j + '-' + i]) {
+                            this.coordinateData[j + '-' + i] = {
+                                id: j + '-' + i,
+                                y: i * this.size.item + 0.5,
+                                x: j * this.size.item + 0.5,
+                                w: this.size.item,
+                                h: this.size.item,
+                                cY: i * this.size.item + 0.5 + this.size.item * 0.5,
+                                cX: j * this.size.item + 0.5 + this.size.item * 0.5,
+                                itemX: j,
+                                itemY: i
+                            }
+                            // 中间置空
+                            this.coordinateData[j + '-' + i].flage = !(j === 3 && i === 3)
+                        }
+                    }
+                }
+            }
+            this.ctxCache.fill()
+            this.ctxCache.stroke()
+            this.ctxCache.closePath()
+
+        },
+        // 绘制棋子
+        drawPiece: function () {
+            // 绘制选中的背景
+            if (this.currentChess.start) {
+                this.ctxCache.beginPath()
+                this.ctxCache.fillStyle = '#ccc'
+                this.ctxCache.fillRect(this.currentChess.start.x, this.currentChess.start.y, this.currentChess.start.w, this.currentChess.start.h)
+                this.ctxCache.fill()
+                this.ctxCache.closePath()
+            }
+            // 绘制棋子
+            this.ctxCache.beginPath()
+            this.ctxCache.fillStyle = '#333'
+            for (var item in this.coordinateData) {
+                // 绘制棋子
+                if (this.coordinateData[item].flage) {
+                    this.ctxCache.moveTo(this.coordinateData[item].cX, this.coordinateData[item].cY)
+                    this.ctxCache.arc(
+                        this.coordinateData[item].cX,
+                        this.coordinateData[item].cY,
+                        this.size.radius,
+                        0,
+                        Math.PI * 2,
+                        false
+                    )
+                }
+            }
+            this.ctxCache.fill()
+            this.ctxCache.closePath()
+
+        },
+        // 事件
+        evtPiece: function () {
+            this.canvas.onclick = (evt) => {
+                for (var item in this.coordinateData) {
+                    if (
+                        evt.offsetX > this.coordinateData[item].x &&
+                        evt.offsetX < this.coordinateData[item].x + this.coordinateData[item].w &&
+                        evt.offsetY > this.coordinateData[item].y &&
+                        evt.offsetY < this.coordinateData[item].y + this.coordinateData[item].h
+                    ) {
+                        // 判断当前棋盘上要走的棋子
+                        if (this.currentChess.start) {
+                            // 当前的要执行的棋子和当前点击的棋子是否相同
+                            if (this.currentChess.start.id === this.coordinateData[item].id) {
+                                this.currentChess = {
+                                    start: null,
+                                    end: null
+                                }
+                                // 重新绘制
+                                this.initDraw()
+                            } else {
+                                this.currentChess.end = this.coordinateData[item]
+                            }
+                        } else {
+                            this.currentChess.start = this.coordinateData[item]
+                            // 重新绘制
+                            this.initDraw()
+                        }
+
+                        // 判断棋子执行前后的位置
+                        if (this.currentChess.start && this.currentChess.end) {
+                            this.implement()
+                        }
+                    }
+                }
+            }
+        },
+        // 棋子的是否可跳转判断
+        implement: function () {
+            // 判断执行的开始和结束的中间值
+            if (this.currentChess.start && this.currentChess.end) {
+                if (
+                    (this.currentChess.start.itemY === this.currentChess.end.itemY && Math.abs(this.currentChess.start.itemX - this.currentChess.end.itemX) === 2) ||
+                    (this.currentChess.start.itemX === this.currentChess.end.itemX && Math.abs(this.currentChess.start.itemY - this.currentChess.end.itemY) === 2)
+                ) {
+
+                    // 获取中间的棋子
+                    var cY = (this.currentChess.start.itemY + this.currentChess.end.itemY) * 0.5
+                    var cX = (this.currentChess.start.itemX + this.currentChess.end.itemX) * 0.5
+                    // 删除中间的棋子
+                    if (this.coordinateData[cX + '-' + cY].flage) {
+                        this.coordinateData[cX + '-' + cY].flage = false
+
+                        // 执行前后的数据更新
+                        this.coordinateData[this.currentChess.start.id].flage = false
+                        this.coordinateData[this.currentChess.end.id].flage = true
+
+                        // 当前棋子置空
+                        this.currentChess = {
+                            start: null,
+                            end: null
+                        }
+
+                        // 重新绘制
+                        this.initDraw()
+                    }
+                }
+            }
+        }
+    }
+
+    var kmChess = new KmChess()
+
+    kmChess.init()
+
+</script>
+
+</body>
+</html>
