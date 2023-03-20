@@ -11,6 +11,7 @@
     {"name": "可视化","val":"水资源","src": "visualization/v1.png","href": "./project/visualization/index.html"}
   ],
   "plugDom": [
+    {"name": "树图","val":"canvas文档树","src": "customTreePng.png","href": "./project/customTree.html"},
     {"name": "拓扑图","val":"canvas拓扑图","src": "topological.png","href": "./project/topologicalGraph/index.html"},
     {"name": "Kui框架","val":"视图UI，包括栅格系统，按钮，各种小插件，方法等","src": "kui.png","href": "./project/Kui/index.html"},
     {"name": "Tree节点拖拽","val":"渲染的树形视图，然后可以拖拽，可以用于各种流程图","src": "drapNode.png","href": "./project/drapNode/index.html"},
